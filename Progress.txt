@@ -1,16 +1,37 @@
 Abdul Rehman *
 arehma7      *   
 CS 342       *
-**************
+LOG          *
+*********************************
+Key:                            *
+> Not yet/needs to be implented *
+- Implemented                   *
+___ Sections                    *
+** Boarder                      *
+*********************************
 
 
 10/14/2017
-----------
+**************
+Class List:
 -created the Button class
 -created the Window class
-
-Button- responsible for creating and initializing the buttons
+______________
+Button: responsible for creating and initializing the buttons
 whether they are the toggle buttons that the user clicks to set
 the board with or the buttons on the board.
+--------------
+______________
 
-Window- Resposible for housing all the buttons, menues, and/or status bars;
+Window: Resposible for housing all the buttons, menues, and/or status bars;
+--------------
+-created the outer grid that houses the inner grids
+-created the inner grid that houses the board buttons
+-created the board buttons
+-Board can now be displayed
+> Need to implement toggle switch
+______________
+
+Menu: Not yet implemented
+> need to implement 
+**************

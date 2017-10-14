@@ -10,14 +10,17 @@ public class Button extends JButton{
 	private boolean toggle;
 
 	/*
-	 * constructors to initialize the buttons by type*/
+	 * constructors to initialize the buttons by type
+	 */
 	public Button(String text) {
 		super (text);
 	}
+	//board buttons
 	public Button (String text, int n){
 		super (text);
 		this.num = n;
 	}
+	//toggle switches
 	public Button (String text, int n, boolean t){
 		super (text);
 		this.toggle = t;
