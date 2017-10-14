@@ -1,0 +1,16 @@
+Abdul Rehman *
+arehma7      *   
+CS 342       *
+**************
+
+
+10/14/2017
+----------
+-created the Button class
+-created the Window class
+
+Button- responsible for creating and initializing the buttons
+whether they are the toggle buttons that the user clicks to set
+the board with or the buttons on the board.
+
+Window- Resposible for housing all the buttons, menues, and/or status bars;
