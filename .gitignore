@@ -120,3 +120,8 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/java,linux,eclipse,windows
+
+# Except Project File
+!.classpath
+!.project
+
