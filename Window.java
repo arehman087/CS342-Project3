@@ -16,7 +16,8 @@ public class Window extends JFrame{
 	private Container iContainer[];
 	//grid format
 	private GridLayout Grid;
-
+	//menu
+	private Menu menu;
 	
 	//set up GUI
 	public Window() {
@@ -35,7 +36,7 @@ public class Window extends JFrame{
 			this.iContainer[i] = new Container();
 			this.iContainer[i].setLayout(Grid);
 		}
-		/*create the buttons for the board
+		/**create the buttons for the board
 		 *then add buttons to the container then add 
 		 *the container to the larger grid
 		 */
@@ -48,13 +49,16 @@ public class Window extends JFrame{
 			this.oContainer.add(((Component)this.iContainer[i]));
 		}
 		
+		this.menu = new Menu();
+		
 		setSize( 750, 750 );
 		setVisible( true );
 		
 	}//end of constructor Window
 
 	
-	/*main method just used for running GUI
+	/**
+	 * main method just used for running GUI
 	 */
 	public static void main( String args[] )
 	   {

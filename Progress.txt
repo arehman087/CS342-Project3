@@ -6,16 +6,16 @@ LOG          *
 Key:                            *
 > Not yet/needs to be implented *
 - Implemented                   *
+!! needs fixing                 *
 ___ Sections                    *
 ** Boarder                      *
 *********************************
 
-
-10/14/2017
 **************
 Class List:
 -created the Button class
 -created the Window class
+-created the Menu class
 ______________
 Button: responsible for creating and initializing the buttons
 whether they are the toggle buttons that the user clicks to set
@@ -32,6 +32,10 @@ Window: Resposible for housing all the buttons, menues, and/or status bars;
 > Need to implement toggle switch
 ______________
 
-Menu: Not yet implemented
-> need to implement 
+Menu: Responsible for holding the File, Help, and Hint Menu
+> need to implement File components
+> need to implement Help components
+> need to implement Hint components
+!!-MENU BAR DOES NOT SHOW UP
+
 **************

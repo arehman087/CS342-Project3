@@ -9,9 +9,11 @@ public class Button extends JButton{
 	private int num;
 	private boolean toggle;
 
-	/*
+	/**
 	 * constructors to initialize the buttons by type
 	 */
+	
+	//initial board positions
 	public Button(String text) {
 		super (text);
 	}
@@ -26,19 +28,19 @@ public class Button extends JButton{
 		this.toggle = t;
 		this.num = n;
 	}
-	/*
+	/**
 	 * sets the number of the button pushed
 	 */
 	public void setNum(int n){
 		this.num = n;
 	}
-	/*
+	/**
 	 * gets the value of the button
 	 */
 	public int getNum(){
 		return this.num;
 	}
-	/*
+	/**
 	 * sets the button to off or on 
 	 * depending in its current status
 	 */
@@ -49,7 +51,7 @@ public class Button extends JButton{
 			this.toggle = true;
 		}
 	}
-	/*
+	/**
 	 * gets the status of the button 
 	 * (if it is pressed or not)
 	 */
