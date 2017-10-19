@@ -23,7 +23,9 @@ public class Cell {
 	}
 	
 	/**
-	 * Instantiates a new Cell instance with the specified contents.
+	 * Instantiates a new Cell instance with the specified contents. The
+	 * candidates list is automatically filled in with all possible
+	 * candidates for the cell.
 	 * @param row The row of the cell.
 	 * @param col The column of the cell.
 	 * @param contents The contents of the cell. 
@@ -37,13 +39,16 @@ public class Cell {
 		this.m_col = col;
 		
 		this.candidates = new ArrayList<Integer>();
+		for (int i = 1; i <= Grid.GRID_SIZE; i++) {
+			candidates.add(i);
+		}
 	}
 	
 	/**
-	 * @return A boolean representing whether the Cell is read only or not.
+	 * @return A list of all of the candidates for this cell.
 	 */
-	public boolean getReadOnly() {
-		return this.m_readonly;
+	public ArrayList<Integer> getCandidates() {
+		return this.candidates;
 	}
 	
 	/**
@@ -54,13 +59,6 @@ public class Cell {
 	}
 	
 	/**
-	 * @return The row of the cell in the grid.
-	 */
-	public int getRow() {
-		return this.m_row;
-	}
-	
-	/**
 	 * @return The column of the cell in the grid.
 	 */
 	public int getColumn() {
@@ -68,16 +66,29 @@ public class Cell {
 	}
 	
 	/**
+	 * @return The row of the cell in the grid.
+	 */
+	public int getRow() {
+		return this.m_row;
+	}
+	
+	/**
+	 * @return A boolean representing whether the Cell is read only or not.
+	 */
+	public boolean getReadOnly() {
+		return this.m_readonly;
+	}
+	
+	/**
 	 * Sets the contents of the cell, if the cell is not read only.
 	 * @param contents The new contents of the cell.
-	 * @return The old contents of the cell.
+	 * @return True if the cell was changed, false otherwise.
 	 */
-	public int setContents(int contents) {
-		if (this.m_readonly) return this.m_contents;
+	public boolean setContents(int contents) {
+		if (this.m_readonly) return false;
 		
-		int oldContents = this.m_contents;
 		this.m_contents = contents;
-		return oldContents;
+		return true;
 	}
 }
 
