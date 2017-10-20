@@ -22,6 +22,11 @@ public class CellTest {
 		assertEquals(2, cell2.getColumn());
 		assertEquals(0, cell2.getContents());
 		assertFalse(cell2.getReadOnly());
+		
+		for (int i = 0; i < Grid.GRID_SIZE; ++i) {
+			assertEquals(i + 1, cell1.getCandidates().get(i).intValue());
+			assertEquals(i + 1, cell1.getCandidates().get(i).intValue());
+		}
 	}
 	
 	@Test
@@ -40,17 +45,22 @@ public class CellTest {
 		assertEquals(9, cell2.getColumn());
 		assertEquals(5, cell2.getContents());
 		assertTrue(cell2.getReadOnly());
+		
+		for (int i = 0; i < Grid.GRID_SIZE; ++i) {
+			assertEquals(i + 1, cell1.getCandidates().get(i).intValue());
+			assertEquals(i + 1, cell1.getCandidates().get(i).intValue());
+		}
 	}
 	
 	@Test
 	/**
 	 * Tests the setContents method works for read only cells.
 	 */
-	public void doesSetContentsForRO() {
+	public void doesGetContentsForRO() {
 		Cell cell1 = new Cell(3, 2, 1, true);
 		
-		int oldContents = cell1.setContents(9);
-		assertEquals(1, oldContents);
+		boolean set = cell1.setContents(9);
+		assertFalse(set);
 		assertEquals(1, cell1.getContents());
 	}
 	
@@ -61,8 +71,8 @@ public class CellTest {
 	public void doesSetContentsForRW() {
 		Cell cell1 = new Cell(3, 2, 1, false);
 		
-		int oldContents = cell1.setContents(9);
-		assertEquals(1, oldContents);
+		boolean set = cell1.setContents(9);
+		assertTrue(set);
 		assertEquals(9, cell1.getContents());
 	}
 }
