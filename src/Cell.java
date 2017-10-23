@@ -1,16 +1,16 @@
-import java.util.ArrayList;
+import java.util.HashSet;
 
 /**
  * Defines a single cell of the Sudoku Grid.
  */
 public class Cell {
-	private boolean m_readonly;            // Is Cell changeable? 
-	private int m_contents;                // Number in the Cell
+	private boolean m_readonly;              // Is Cell changeable? 
+	private int m_contents;                  // Number in the Cell
 	
-	private int m_row;                     // Row in Grid
-	private int m_col;                     // Row in Column
+	private int m_row;                       // Row in Grid
+	private int m_col;                       // Row in Column
 	
-	private ArrayList<Integer> candidates; // List of candidates TODO
+	private HashSet<Integer> m_candidates; // List of candidates
 	
 	/**
 	 * Instantiates a new empty Cell instance. The contents of the set are
@@ -38,17 +38,17 @@ public class Cell {
 		this.m_row = row;
 		this.m_col = col;
 		
-		this.candidates = new ArrayList<Integer>();
+		this.m_candidates = new HashSet<Integer>();
 		for (int i = 1; i <= Grid.GRID_SIZE; i++) {
-			candidates.add(i);
+			m_candidates.add(i);
 		}
 	}
 	
 	/**
 	 * @return A list of all of the candidates for this cell.
 	 */
-	public ArrayList<Integer> getCandidates() {
-		return this.candidates;
+	public HashSet<Integer> getCandidates() {
+		return this.m_candidates;
 	}
 	
 	/**
@@ -89,6 +89,14 @@ public class Cell {
 		
 		this.m_contents = contents;
 		return true;
+	}
+	
+	/**
+	 * Sets the read only flag of the cell.
+	 * @param ro Should the cell be read only?
+	 */
+	public void setReadOnly(boolean ro) {
+		this.m_readonly = ro;
 	}
 }
 
