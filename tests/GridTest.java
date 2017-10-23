@@ -4,13 +4,28 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.HashSet;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * Defines the class for unit testing the Grid class.
  */
-public class GridTest { 
+public class GridTest {
+	private static HashSet<Integer> FULL_CANDIDATE_LIST;
+	
+	@BeforeClass
+	/**
+	 * Initializes the static fields of the GridTest class.
+	 */
+	public static void initStatics() {
+		FULL_CANDIDATE_LIST = new HashSet<Integer>();
+		for (int i = 1; i <= Grid.GRID_SIZE; ++i) {
+			FULL_CANDIDATE_LIST.add(i);
+		}
+	}
+	
 	@Test
 	/**
 	 * Tests the default constructor of the Grid.
@@ -25,6 +40,7 @@ public class GridTest {
 				assertEquals(r, cellAt.getRow());
 				assertEquals(c, cellAt.getColumn());
 				assertEquals(0, cellAt.getContents());
+				assertEquals(FULL_CANDIDATE_LIST, cellAt.getCandidates());
 				assertFalse(cellAt.getReadOnly());
 			}
 		}
@@ -72,6 +88,16 @@ public class GridTest {
 			assertEquals(expectedRow[i],      cells[i].getRow());
 			assertEquals(expectedColumn[i],   cells[i].getColumn());
 			assertEquals(expectedContents[i], cells[i].getContents());
+			
+			// Assert all cells in the row and column do not have the cell in
+			// their candidate list.
+			int r = cells[i].getRow();
+			int c = cells[i].getColumn();
+			int v = cells[i].getContents();
+			for (int j = 0; j < Grid.GRID_SIZE; ++j) {
+				assertFalse(grid.getCell(r, j).getCandidates().contains(v));
+				assertFalse(grid.getCell(j, c).getCandidates().contains(v));
+			}
 		}
 		
 		// Go through all other cells, assert they are R/W zero initialized
@@ -114,7 +140,7 @@ public class GridTest {
 		for (int i = 0; i < expectedRow.length; ++i) {
 			grid.setCellValue(expectedRow[i] - 1, 
 					expectedColumn[i] - 1, 
-					expectedContents[i]);
+					expectedContents[i], false);
 		}
 		
 		// For this test, let's write to a string but in reality we would

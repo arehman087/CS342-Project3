@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -11,18 +10,18 @@ import java.io.IOException;
 public class Grid {
 	public static final int GRID_SIZE = 9;
 	
-	private Cell[][] cells;
+	private Cell[][] m_cells;
 	
 	/**
 	 * Instantiates a GRID_SIZE x GRID_SIZE grid where each cell is set to a
 	 * read/write empty cell (contents of zero).
 	 */
 	public Grid() {
-		this.cells = new Cell[GRID_SIZE][GRID_SIZE];
+		this.m_cells = new Cell[GRID_SIZE][GRID_SIZE];
 		
 		for (int r = 0; r < GRID_SIZE; ++r) {
 			for (int c = 0; c < GRID_SIZE; ++c) {
-				this.cells[r][c] = new Cell(r, c);
+				this.m_cells[r][c] = new Cell(r, c);
 			}
 		}
 	}
@@ -53,7 +52,8 @@ public class Grid {
 			int row = Integer.parseInt(lineContents[0]) - 1;
 			int col = Integer.parseInt(lineContents[1]) - 1;
 			int con = Integer.parseInt(lineContents[2]);
-			this.cells[row][col] = new Cell(row, col, con, true);
+			this.setCellValue(row, col, con, false);
+			this.m_cells[row][col].setReadOnly(true);
 		}
 		
 		bR.close();
@@ -75,13 +75,42 @@ public class Grid {
 	 * @param r The row of the cell.
 	 * @param c The column of the cell.
 	 * @param contents The new contents of the cell.
+	 * @param check Checks if the value of the cell can be set to the new
+	 *              contents before setting the value. If the value cannot be
+	 *              set due to the candidates list, false is returned and the
+	 *              grid is not modified.
 	 * @return True if the value was set (cell was not read only), false 
 	 *         otherwise.
 	 */
-	public boolean setCellValue(int r, int c, int contents) {
-		// TODO: Update Candidates List...
+	public boolean setCellValue(int r, int c, int contents, boolean check) {
+		Cell at = this.getCell(r, c);
 		
-		return this.getCell(r, c).setContents(contents);
+		// Check the candidates list if necessary
+		if (check && !at.getCandidates().contains(contents)) {
+			return false;
+		}
+		
+		// Try to set the changes in the cell. If failed, return false
+		int oldContents = at.getContents();
+		boolean changed = at.setContents(contents);
+		if (!changed) return false;
+		
+		// Otherwise, for each cell in the same row and column, remove the
+		// new value from the candidate lists; add the old value to the
+		// candidate lists (only if the old value is not zero/uninit).
+		for (int i = 0; i < GRID_SIZE; ++i) {
+			Integer oldContentsObj = Integer.valueOf(oldContents);
+			Integer newContentsObj = Integer.valueOf(contents);
+			
+			this.getCell(r, i).getCandidates().remove(newContentsObj);
+			this.getCell(i, c).getCandidates().remove(newContentsObj);
+			
+			if (oldContents != 0) {
+				this.getCell(r, i).getCandidates().add(oldContentsObj);
+				this.getCell(i, c).getCandidates().add(oldContentsObj);
+			}
+		}
+		return true;
 	}
 	
 	/**
@@ -125,6 +154,6 @@ public class Grid {
 		assert r >= 0 && r < GRID_SIZE;
 		assert c >= 0 && c < GRID_SIZE;
 		
-		return this.cells[r][c];
+		return this.m_cells[r][c];
 	}
 }

@@ -24,8 +24,7 @@ public class CellTest {
 		assertFalse(cell2.getReadOnly());
 		
 		for (int i = 0; i < Grid.GRID_SIZE; ++i) {
-			assertEquals(i + 1, cell1.getCandidates().get(i).intValue());
-			assertEquals(i + 1, cell1.getCandidates().get(i).intValue());
+			assertTrue(cell1.getCandidates().contains(i));
 		}
 	}
 	
@@ -47,8 +46,7 @@ public class CellTest {
 		assertTrue(cell2.getReadOnly());
 		
 		for (int i = 0; i < Grid.GRID_SIZE; ++i) {
-			assertEquals(i + 1, cell1.getCandidates().get(i).intValue());
-			assertEquals(i + 1, cell1.getCandidates().get(i).intValue());
+			assertTrue(cell1.getCandidates().contains(i));
 		}
 	}
 	
