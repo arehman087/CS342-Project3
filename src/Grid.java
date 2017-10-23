@@ -1,3 +1,9 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 /**
  * Defines the class representing the Sudoku grid.
  */
@@ -18,6 +24,38 @@ public class Grid {
 				this.cells[r][c] = new Cell(r, c);
 			}
 		}
+	}
+	
+	/**
+	 * Instantiates a new GRID_SIZE x GRID_SIZE grid where each cell is set to
+	 * a read/write empty cell (contents of zero). Then, for each entry in the
+	 * specified file, the cell is changed to a read-only cell with the 
+	 * contents specified in the file.
+	 * @param f The file to be used for the grid.
+	 * @throws IOException If the file cannot be opened or read from.
+	 */
+	public Grid(File f) throws IOException {
+		// Initialize all cells to empty R/W
+		this();
+		
+		// Read the file into Buffered Reader
+		FileReader fR = new FileReader(f);
+		BufferedReader bR = new BufferedReader(fR);
+	
+		// Parse each line of the file
+		String line;
+		while ((line = bR.readLine()) != null) {
+			String[] lineContents = line.split(" ");
+			
+			// Get the row, column and contents of each line and create a new
+			// read-only cell with that data.
+			int row = Integer.parseInt(lineContents[0]) - 1;
+			int col = Integer.parseInt(lineContents[1]) - 1;
+			int con = Integer.parseInt(lineContents[2]);
+			this.cells[row][col] = new Cell(row, col, con, true);
+		}
+		
+		bR.close();
 	}
 	
 	/**
