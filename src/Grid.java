@@ -114,6 +114,38 @@ public class Grid {
 	}
 	
 	/**
+	 * Returns a String representation of the Grid.
+	 */
+	@Override
+	public String toString() {
+		StringBuilder stringBuilder = new StringBuilder();
+		
+		// Append the top of the grid box
+		stringBuilder.append("+");
+		for (int i = 0; i < GRID_SIZE; ++i) {
+			stringBuilder.append("---+");
+		}
+		stringBuilder.append('\n');
+		String lineSep = stringBuilder.toString();
+		
+		// Append each row of the grid. Separate each row of the grid by the
+		// same line as used for the top of the grid
+		for (int r = 0; r < GRID_SIZE; ++r) {
+			for (int c = 0; c < GRID_SIZE; ++c) {
+				int contents = this.m_cells[r][c].getContents();
+				
+				stringBuilder.append("| ");
+				stringBuilder.append(String.format("%d", contents));
+				stringBuilder.append(" ");
+			}
+			stringBuilder.append("|\n");
+			stringBuilder.append(lineSep);
+		}
+		
+		return stringBuilder.toString();
+	}
+	
+	/**
 	 * Writes the contents of the Grid to the specified Buffered Writer 
 	 * instance. For each initialized cell: the row, column and contents of
 	 * the cell are written to a single line and flushed to the writer.
