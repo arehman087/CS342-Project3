@@ -169,6 +169,29 @@ public class GridTest {
 	
 	@Test
 	/**
+	 * Does solve single.
+	 */
+	public void doesSolveSingle() {
+		Grid grid = new Grid();
+		
+		for (int i = 0; i < Grid.GRID_SIZE - 1; ++i) {
+			grid.setCellValue(i, 0, i + 1, false);
+			grid.setCellValue(0, i, i + 1, false);
+		}
+		
+		assertEquals(0, grid.getCellValue(0, 8));
+		assertEquals(0, grid.getCellValue(8, 0));
+		
+		System.out.println(grid);
+		grid.solveSingle();
+		System.out.println(grid);
+		
+		assertEquals(9, grid.getCellValue(0, 8));
+		assertEquals(9, grid.getCellValue(8, 0));
+	}
+	
+	@Test
+	/**
 	 * Tests the write method of the Grid.
 	 */
 	public void doesWrite() {

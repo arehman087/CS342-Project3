@@ -3,6 +3,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashSet;
 
 /**
  * Defines the class representing the Sudoku grid.
@@ -105,12 +106,33 @@ public class Grid {
 			this.getCell(r, i).getCandidates().remove(newContentsObj);
 			this.getCell(i, c).getCandidates().remove(newContentsObj);
 			
-			if (oldContents != 0) {
+			if (oldContents != 0 && oldContents != contents) {
 				this.getCell(r, i).getCandidates().add(oldContentsObj);
 				this.getCell(i, c).getCandidates().add(oldContentsObj);
 			}
 		}
 		return true;
+	}
+	
+	/**
+	 * Solves all cells in the grid which fit the single cell criteria.
+	 */
+	public void solveSingle() {
+		for (int r = 0; r < GRID_SIZE; ++r) {
+			for (int c = 0; c < GRID_SIZE; ++c) {
+				// Get the current cell. Skip if read-only or if the cell
+				// is already initialized.
+				Cell at = this.getCell(r, c);
+				if (at.getReadOnly() || at.getContents() != 0) continue;
+				
+				HashSet<Integer> candidates = at.getCandidates();
+				Integer candidate = candidates.iterator().next(); 
+				
+				if (candidates.size() == 1) {
+					this.setCellValue(r, c, candidate, true);
+				}
+			}
+		}
 	}
 	
 	/**
