@@ -125,6 +125,50 @@ public class GridTest {
 	
 	@Test
 	/**
+	 * Tests the setCellValue for a case where there is no checking, and the
+	 * change is valid and the cell is empty before the change.
+	 */
+	public void doesSetCellValue_Basic() {
+		Grid grid = new Grid();
+		grid.setCellValue(3, 5, 8, false);
+		
+		// Construct set with no eight
+		HashSet<Integer> noEight = new HashSet<Integer>();
+		for (int i = 1; i <= Grid.GRID_SIZE; ++i) {
+			if (i != 8) noEight.add(i);
+		}
+		
+		// Assert eight got removed from candidate lists of all cells on the
+		// row and column.
+		for (int i = 0; i < Grid.GRID_SIZE; ++i) {
+			assertEquals(noEight, grid.getCell(3, i).getCandidates());
+			assertEquals(noEight, grid.getCell(i, 5).getCandidates());
+		}
+	}
+	
+	@Test
+	/**
+	 * Tests the setCellValue for a case where the cell's value is reset to 
+	 * zero.
+	 */
+	public void doesSetCellValue_ToEmpty() {
+		Grid grid = new Grid();
+		grid.setCellValue(3, 5, 8, false);
+		
+		grid.setCellValue(3, 5, 0, false);
+		
+		// Assert eight got removed from candidate lists of all cells on the
+		// row and column.
+		for (int i = 0; i < Grid.GRID_SIZE; ++i) {
+			assertEquals(FULL_CANDIDATE_LIST, 
+					grid.getCell(3, i).getCandidates());
+			assertEquals(FULL_CANDIDATE_LIST, 
+					grid.getCell(i, 5).getCandidates());
+		}
+	}
+	
+	@Test
+	/**
 	 * Tests the write method of the Grid.
 	 */
 	public void doesWrite() {
