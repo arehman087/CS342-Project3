@@ -1,7 +1,9 @@
 import static org.junit.Assert.*;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 
 import org.junit.Test;
 
@@ -92,6 +94,55 @@ public class GridTest {
 				assertEquals(c, cell.getColumn());
 				assertEquals(0, cell.getContents());
 			}
+		}
+	}
+	
+	@Test
+	/**
+	 * Tests the write method of the Grid.
+	 */
+	public void doesWrite() {
+		Grid grid = new Grid();
+		
+		// Array containing the expected row, column and contents of each 
+		// cell defined above.
+		int[] expectedRow      = { 1, 2, 5, 5, 5, 5, 5, 7, 8, 9 };
+		int[] expectedColumn   = { 4, 4, 1, 3, 5, 7, 9, 6, 6, 8 };
+		int[] expectedContents = { 2, 8, 1, 3, 5, 7, 9, 2, 8, 2 };
+		
+		// Set the grid's row, column and contents according to above arrays
+		for (int i = 0; i < expectedRow.length; ++i) {
+			grid.setCellValue(expectedRow[i] - 1, 
+					expectedColumn[i] - 1, 
+					expectedContents[i]);
+		}
+		
+		// For this test, let's write to a string but in reality we would
+		// probably write to a file.
+		StringWriter sW   = new StringWriter();
+		BufferedWriter bW = new BufferedWriter(sW);
+		try {
+			grid.write(bW);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		// Read the result string line by line, make sure each line has the
+		// correct expected row, column and contents.
+		String result = sW.toString();
+		String lines[] = result.split("\n");
+		assertEquals(expectedRow.length, lines.length);
+		for (int i = 0; i < lines.length; ++i) {
+			String line = lines[i];
+			String[] lineContents = line.split(" ");
+			
+			int row = Integer.parseInt(lineContents[0]);
+			int col = Integer.parseInt(lineContents[1]);
+			int con = Integer.parseInt(lineContents[2]);
+			
+			assertEquals(expectedRow[i],      row);
+			assertEquals(expectedColumn[i],   col);
+			assertEquals(expectedContents[i], con);
 		}
 	}
 }

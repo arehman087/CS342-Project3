@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -81,6 +82,37 @@ public class Grid {
 		// TODO: Update Candidates List...
 		
 		return this.getCell(r, c).setContents(contents);
+	}
+	
+	/**
+	 * Writes the contents of the Grid to the specified Buffered Writer 
+	 * instance. For each initialized cell: the row, column and contents of
+	 * the cell are written to a single line and flushed to the writer.
+	 * @param bW The writer to which the grid is to be written to.
+	 * @throws IOException If the buffered writer instance cannot be written
+	 *                     to.
+	 */
+	public void write(BufferedWriter bW) throws IOException {
+		for (int r = 0; r < GRID_SIZE; ++r) {
+			for (int c = 0; c < GRID_SIZE; ++c) {
+				Cell at = this.getCell(r, c);
+				
+				// Skip the cell if it is not initialized
+				if (at.getContents() == 0) continue;
+				
+				// Write the cell in the format "Row Column Contents\n". Add
+				// one to the row and column since the file indices should be 
+				// in range [1, 9], not [0, 8].
+				bW.write(String.valueOf(at.getRow() + 1));
+				bW.write(" ");
+				bW.write(String.valueOf(at.getColumn() + 1));
+				bW.write(" ");
+				bW.write(String.valueOf(at.getContents()));
+				bW.newLine();
+			}
+		}
+		
+		bW.flush();
 	}
 	
 	/**
