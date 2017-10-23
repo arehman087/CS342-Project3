@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.junit.BeforeClass;
@@ -44,6 +45,50 @@ public class GridTest {
 				assertFalse(cellAt.getReadOnly());
 			}
 		}
+	}
+	
+	@Test
+	/**
+	 * Tests the getRegion() method of the Grid.
+	 */
+	public void doesGetRegion() {
+		Grid grid = new Grid();
+		
+		ArrayList<Cell> cells0 = grid.getRegion(0);
+		assertTrue(cells0.contains(grid.getCell(0, 0)));
+		assertTrue(cells0.contains(grid.getCell(0, 1)));
+		assertTrue(cells0.contains(grid.getCell(0, 2)));
+		assertTrue(cells0.contains(grid.getCell(1, 0)));
+		assertTrue(cells0.contains(grid.getCell(1, 1)));
+		assertTrue(cells0.contains(grid.getCell(1, 2)));
+		assertTrue(cells0.contains(grid.getCell(2, 0)));
+		assertTrue(cells0.contains(grid.getCell(2, 1)));
+		assertTrue(cells0.contains(grid.getCell(2, 2)));
+		assertEquals(9, cells0.size());
+		
+		ArrayList<Cell> cells4 = grid.getRegion(4);
+		assertTrue(cells4.contains(grid.getCell(3, 3)));
+		assertTrue(cells4.contains(grid.getCell(3, 4)));
+		assertTrue(cells4.contains(grid.getCell(3, 5)));
+		assertTrue(cells4.contains(grid.getCell(4, 3)));
+		assertTrue(cells4.contains(grid.getCell(4, 4)));
+		assertTrue(cells4.contains(grid.getCell(4, 5)));
+		assertTrue(cells4.contains(grid.getCell(5, 3)));
+		assertTrue(cells4.contains(grid.getCell(5, 4)));
+		assertTrue(cells4.contains(grid.getCell(5, 5)));
+		assertEquals(9, cells4.size());
+		
+		ArrayList<Cell> cells7 = grid.getRegion(7);
+		assertTrue(cells7.contains(grid.getCell(6, 3)));
+		assertTrue(cells7.contains(grid.getCell(6, 4)));
+		assertTrue(cells7.contains(grid.getCell(6, 5)));
+		assertTrue(cells7.contains(grid.getCell(7, 3)));
+		assertTrue(cells7.contains(grid.getCell(7, 4)));
+		assertTrue(cells7.contains(grid.getCell(7, 5)));
+		assertTrue(cells7.contains(grid.getCell(8, 3)));
+		assertTrue(cells7.contains(grid.getCell(8, 4)));
+		assertTrue(cells7.contains(grid.getCell(8, 5)));
+		assertEquals(9, cells7.size());
 	}
 	
 	@Test
@@ -94,9 +139,13 @@ public class GridTest {
 			int r = cells[i].getRow();
 			int c = cells[i].getColumn();
 			int v = cells[i].getContents();
+			ArrayList<Cell> region = grid.getRegion(cells[i].getRegion());
 			for (int j = 0; j < Grid.GRID_SIZE; ++j) {
 				assertFalse(grid.getCell(r, j).getCandidates().contains(v));
 				assertFalse(grid.getCell(j, c).getCandidates().contains(v));
+			}
+			for (Cell cell : region) {
+				assertFalse(cell.getCandidates().contains(v));
 			}
 		}
 		
@@ -144,6 +193,14 @@ public class GridTest {
 			assertEquals(noEight, grid.getCell(3, i).getCandidates());
 			assertEquals(noEight, grid.getCell(i, 5).getCandidates());
 		}
+		
+		// Assert eight got removed from candidate lists of all cells in the
+		// region.
+		ArrayList<Cell> regions = grid.getRegion(
+				grid.getCell(3, 5).getRegion());
+		for (Cell cell : regions) {
+			assertEquals(noEight, cell.getCandidates());
+		}
 	}
 	
 	@Test
@@ -157,13 +214,19 @@ public class GridTest {
 		
 		grid.setCellValue(3, 5, 0, false);
 		
-		// Assert eight got removed from candidate lists of all cells on the
-		// row and column.
+		// Assert candidate list was reset to full for each row and column
 		for (int i = 0; i < Grid.GRID_SIZE; ++i) {
 			assertEquals(FULL_CANDIDATE_LIST, 
 					grid.getCell(3, i).getCandidates());
 			assertEquals(FULL_CANDIDATE_LIST, 
 					grid.getCell(i, 5).getCandidates());
+		}
+		
+		// Assert candidate list was reset to full for each cell in sub-grid
+		ArrayList<Cell> regions = grid.getRegion(
+				grid.getCell(3, 5).getRegion());
+		for (Cell cell : regions) {
+			assertEquals(FULL_CANDIDATE_LIST, cell.getCandidates());
 		}
 	}
 	

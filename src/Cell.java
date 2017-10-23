@@ -9,6 +9,7 @@ public class Cell {
 	
 	private int m_row;                       // Row in Grid
 	private int m_col;                       // Row in Column
+	private int m_region;                    // Region in Grid
 	
 	private HashSet<Integer> m_candidates; // List of candidates
 	
@@ -37,6 +38,7 @@ public class Cell {
 		this.m_contents = contents;
 		this.m_row = row;
 		this.m_col = col;
+		this.m_region = 3 * (row / 3) + (col / 3);
 		
 		this.m_candidates = new HashSet<Integer>();
 		for (int i = 1; i <= Grid.GRID_SIZE; i++) {
@@ -77,6 +79,13 @@ public class Cell {
 	 */
 	public boolean getReadOnly() {
 		return this.m_readonly;
+	}
+	
+	/**
+	 * @return Region index of the Cell.
+	 */
+	public int getRegion() {
+		return this.m_region;
 	}
 	
 	/**

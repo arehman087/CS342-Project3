@@ -3,6 +3,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -71,6 +72,27 @@ public class Grid {
 	}
 	
 	/**
+	 * Returns a list of all of the cells in the specified region.
+	 * @param reg The region number in the range [0, 8].
+	 * @return The list of the cells in the region.
+	 */
+	public ArrayList<Cell> getRegion(int reg) {
+		assert reg >= 0 && reg <= 8;
+		
+		ArrayList<Cell> cells = new ArrayList<Cell>();
+		for (int r = 0; r < GRID_SIZE; ++r) {
+			for (int c = 0; c < GRID_SIZE; ++c) {
+				Cell cell = this.getCell(r, c);
+				if (cell.getRegion() == reg) {
+					cells.add(cell);
+				}
+			}
+		}
+		
+		return cells;
+	}
+	
+	/**
 	 * Sets the value of the cell at the specified row and column if the cell
 	 * is not read-only.
 	 * @param r The row of the cell.
@@ -103,12 +125,23 @@ public class Grid {
 			Integer oldContentsObj = Integer.valueOf(oldContents);
 			Integer newContentsObj = Integer.valueOf(contents);
 			
+			// Remove cell from candidate lists of all cells with the same
+			// row, column and region.
+			ArrayList<Cell> regionCells = this.getRegion(at.getRegion());
 			this.getCell(r, i).getCandidates().remove(newContentsObj);
 			this.getCell(i, c).getCandidates().remove(newContentsObj);
+			for (Cell cell : regionCells) {
+				cell.getCandidates().remove(newContentsObj);
+			}
 			
+			// Add old cell to candidate lists of all cells with the same
+			// row, column, region.
 			if (oldContents != 0 && oldContents != contents) {
 				this.getCell(r, i).getCandidates().add(oldContentsObj);
 				this.getCell(i, c).getCandidates().add(oldContentsObj);
+				for (Cell cell : regionCells) {
+					cell.getCandidates().add(oldContentsObj);
+				}
 			}
 		}
 		return true;
