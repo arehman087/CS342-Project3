@@ -14,16 +14,18 @@ public class CellTest {
 		Cell cell1 = new Cell(4, 6);
 		assertEquals(4, cell1.getRow());
 		assertEquals(6, cell1.getColumn());
+		assertEquals(5, cell1.getRegion());
 		assertEquals(0, cell1.getContents());
 		assertFalse(cell1.getReadOnly());
 		
 		Cell cell2 = new Cell(8, 2);
 		assertEquals(8, cell2.getRow());
 		assertEquals(2, cell2.getColumn());
+		assertEquals(6, cell2.getRegion());
 		assertEquals(0, cell2.getContents());
 		assertFalse(cell2.getReadOnly());
 		
-		for (int i = 0; i < Grid.GRID_SIZE; ++i) {
+		for (int i = 1; i <= Grid.GRID_SIZE; ++i) {
 			assertTrue(cell1.getCandidates().contains(i));
 		}
 	}
@@ -36,16 +38,18 @@ public class CellTest {
 		Cell cell1 = new Cell(3, 2, 7, false);
 		assertEquals(3, cell1.getRow());
 		assertEquals(2, cell1.getColumn());
+		assertEquals(3, cell1.getRegion());
 		assertEquals(7, cell1.getContents());
 		assertFalse(cell1.getReadOnly());
 		
-		Cell cell2 = new Cell(1, 9, 5, true);
+		Cell cell2 = new Cell(1, 8, 5, true);
 		assertEquals(1, cell2.getRow());
-		assertEquals(9, cell2.getColumn());
+		assertEquals(8, cell2.getColumn());
+		assertEquals(2, cell2.getRegion());
 		assertEquals(5, cell2.getContents());
 		assertTrue(cell2.getReadOnly());
 		
-		for (int i = 0; i < Grid.GRID_SIZE; ++i) {
+		for (int i = 1; i <= Grid.GRID_SIZE; ++i) {
 			assertTrue(cell1.getCandidates().contains(i));
 		}
 	}
