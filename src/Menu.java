@@ -1,19 +1,28 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import javax.swing.*;
 
 public class Menu extends JFrame {
-	private JLabel disp;
+	private JMenu fileMenu;
+	private JMenu helpMenu;
+	private JMenu hintMenu;
+	private Window window;
+	
 	/**
-	 * Creates menu that's used to load or store puzzles
-	 * Creates menu that's used to inform the player how to play and 
-	 * creators
-	 * Creates menu that's used to give hints to the user
+	 * Creates menu that's used to load or store puzzles,
+	 * inform the player how to play and creators, or give hints to 
+	 * the user
 	 * */
-	public Menu() {
+	public Menu(Window w) {
+		this.window = w;
 		//set up menu 
-		JMenu fileMenu = new JMenu("File");
-		fileMenu.setMnemonic('F');
+		this.fileMenu = new JMenu("File");
+		this.fileMenu.setMnemonic('F');
 		
 		//set up menu item
 		/**
@@ -22,20 +31,49 @@ public class Menu extends JFrame {
 		 * exitItem - closes the GUI 
 		 */
 		JMenuItem loadItem = new JMenuItem("Load a Puzzle");
-		fileMenu.add(loadItem);
-		loadItem.addActionListener(null); // need to implement later
+		this.fileMenu.add(loadItem);
+		loadItem.addActionListener(
+				new ActionListener() {
+					public void actionPerformed(ActionEvent open){
+						JFileChooser fileOpen = new JFileChooser();
+						fileOpen.showOpenDialog(loadItem);
+						fileOpen.setFileSelectionMode(JFileChooser.FILES_ONLY);
+						File load = fileOpen.getSelectedFile();
+						try {
+							Menu.this.window.setGrid(new Grid(load));
+						} catch (IOException e) {
+							JOptionPane.showMessageDialog(null, "File Not Found", "Error", JOptionPane.ERROR_MESSAGE);
+						}
+						
+					}
+				}); 
 		
 		JMenuItem storeItem = new JMenuItem("Store a Puzzle");
-		fileMenu.add(storeItem);
-		loadItem.addActionListener(null); // need to implement later
+		this.fileMenu.add(storeItem);
+		storeItem.addActionListener( 
+				new ActionListener(){
+					public void actionPerformed(ActionEvent e){
+						JFileChooser fileOpen = new JFileChooser();
+						fileOpen.showOpenDialog(storeItem);
+						fileOpen.setFileSelectionMode(JFileChooser.FILES_ONLY);
+						File save = fileOpen.getSelectedFile();
+						try {
+							FileWriter fW = new FileWriter(save);
+							BufferedWriter bW = new BufferedWriter(fW);
+							Menu.this.window.getGrid().write(bW);
+						} catch (IOException e1) {
+							JOptionPane.showMessageDialog(null, "File Not Found", "Error", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+		}); // need to implement later
 		
 		JMenuItem exitItem = new JMenuItem("Exit");
-		fileMenu.add(exitItem);
+		this.fileMenu.add(exitItem);
 		exitItem.addActionListener(
 				new ActionListener() {
-					public void actionPerformed(ActionEvent arg0) {
+					public void actionPerformed(ActionEvent e) {
 						System.exit(0);
-					}//inner class to close GUI
+					}
 					
 				});
 		
@@ -45,21 +83,40 @@ public class Menu extends JFrame {
 		 * playItem - Displays the controls to the player
 		 * aboutItem - Displays the authors name and netIDs
 		 */
-		JMenu helpMenu = new JMenu("Help");
-		helpMenu.setMnemonic('?');
+		this.helpMenu = new JMenu("Help");
+		this.helpMenu.setMnemonic('?');
 		
 		//set Help menu items
 		JMenuItem ruleItem = new JMenuItem("Rules");
-		helpMenu.add(ruleItem);
-		ruleItem.addActionListener(null); // implement later
+		this.helpMenu.add(ruleItem);
+		ruleItem.addActionListener( new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				 JOptionPane.showMessageDialog(null, "Each of the nine blocks "
+				 		+ "has to contain all the numbers 1-9 within its squares. "
+				 		+ "Each number can only appear once in a row, column o"
+				 		+ "r box.", "Rules", JOptionPane.INFORMATION_MESSAGE);
+			}
+		}); 
 		
 		JMenuItem playItem = new JMenuItem("How to play");
-		helpMenu.add(playItem);
-		playItem.addActionListener(null);
+		this.helpMenu.add(playItem);
+		playItem.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				 JOptionPane.showMessageDialog(null, "Use the toggle buttons located on the right "
+				 		+ "to select a number. Then select a space on the board to place your "
+				 		+ "number.", "Help", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
 		
 		JMenuItem aboutItem = new JMenuItem("About...");
-		helpMenu.add(aboutItem);
-		aboutItem.addActionListener(null);
+		this.helpMenu.add(aboutItem);
+		aboutItem.addActionListener( new ActionListener() {
+			public void actionPerformed(ActionEvent e){
+				 JOptionPane.showMessageDialog(null, "Team Members: \n Anatoly"
+				 		+ " Tverdovsky - atverd2 \n Abdul Rehman - arehma7"
+				 		, "About", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
 		
 		//Hint Menu
 		/**
@@ -82,41 +139,50 @@ public class Menu extends JFrame {
 		 * blank cell. Note that once a single blank cell has been resolved, your program should
 		 * restart this process with the first blank cell. 
 		 */
-		JMenu hintMenu = new JMenu("Hint");
-		hintMenu.setMnemonic('H');
+		this.hintMenu = new JMenu("Hint");
+		this.hintMenu.setMnemonic('H');
 		
 		//set Hint menu items
 		JCheckBoxMenuItem checker = new JCheckBoxMenuItem("Check");
-		hintMenu.add(checker);
+		this.hintMenu.add(checker);
 		checker.addActionListener(null);
 		
 		JMenuItem sAlgItem = new JMenuItem("Single");
-		hintMenu.add(sAlgItem);
+		this.hintMenu.add(sAlgItem);
 		sAlgItem.addActionListener(null);
 		
 		JMenuItem hAlgItem = new JMenuItem("Hidden");
-		hintMenu.add(hAlgItem);
+		this.hintMenu.add(hAlgItem);
 		hAlgItem.addActionListener(null);
 		
 		JMenuItem LCAlgItem = new JMenuItem("locked Candidate");
-		hintMenu.add(LCAlgItem);
+		this.hintMenu.add(LCAlgItem);
 		LCAlgItem.addActionListener(null);
 		
 		JMenuItem NPAlgItem = new JMenuItem("Naked Pairs");
-		hintMenu.add(NPAlgItem);
+		this.hintMenu.add(NPAlgItem);
 		NPAlgItem.addActionListener(null);
 		
 		JMenuItem fillItem = new JMenuItem("Fill");
-		hintMenu.add(fillItem);
+		this.hintMenu.add(fillItem);
 		fillItem.addActionListener(null);
-		
-		//put the menus into the bar (Having some problems)
-		JMenuBar bar = new JMenuBar();
-		setJMenuBar(bar);
-		bar.add(fileMenu);
-		bar.add(hintMenu);
-		bar.add(helpMenu);
-		
 	}
-
+	/**
+	 * @return gets the file menu contents
+	 */
+	public JMenu getFileMenu(){
+		return this.fileMenu;
+	}
+	/**
+	 * @return gets the help menu contents
+	 */
+	public JMenu getHelpMenu(){
+		return this.helpMenu;
+	}
+	/**
+	 * @return gets the hint menu contents
+	 */
+	public JMenu getHintMenu(){
+		return this.hintMenu;
+	}
 }

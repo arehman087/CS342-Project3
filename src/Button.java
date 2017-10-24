@@ -7,10 +7,12 @@ import javax.swing.*;
  */
 public class Button extends JButton{
 	private int num;
+	private int row;
+	private int col;
 	private boolean toggle;
-
+	
 	/**
-	 * constructors to initialize the buttons by type
+	 * Constructors to initialize the buttons by type
 	 */
 	
 	//initial board positions
@@ -18,9 +20,11 @@ public class Button extends JButton{
 		super (text);
 	}
 	//board buttons
-	public Button (String text, int n){
+	public Button (String text, int n, int posR, int posC){
 		super (text);
 		this.num = n;
+		this.row = posR;
+		this.col = posC;
 	}
 	//toggle switches
 	public Button (String text, int n, boolean t){
@@ -29,19 +33,20 @@ public class Button extends JButton{
 		this.num = n;
 	}
 	/**
-	 * sets the number of the button pushed
+	 * Sets the number of the button pushed
+	 * @param n number that is set to the button
 	 */
 	public void setNum(int n){
 		this.num = n;
 	}
 	/**
-	 * gets the value of the button
+	 * @return gets the value of the button
 	 */
 	public int getNum(){
 		return this.num;
 	}
 	/**
-	 * sets the button to off or on 
+	 * Sets the button to off or on 
 	 * depending in its current status
 	 */
 	public void toggleSwitch(){
@@ -52,10 +57,22 @@ public class Button extends JButton{
 		}
 	}
 	/**
-	 * gets the status of the button 
+	 * @return gets the status of the button 
 	 * (if it is pressed or not)
 	 */
 	public boolean getToggle(){
 		return this.toggle;
+	}
+	/**
+	 * @return gets button row
+	 **/
+	public int getButtonRow(){
+		return this.row;
+	}
+	/**
+	 * @return gets button col
+	 **/
+	public int getButtonCol(){
+		return this.col;
 	}
 }
