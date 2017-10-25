@@ -245,12 +245,58 @@ public class GridTest {
 		assertEquals(0, grid.getCellValue(0, 8));
 		assertEquals(0, grid.getCellValue(8, 0));
 		
-		System.out.println(grid);
 		grid.solveSingle();
-		System.out.println(grid);
 		
 		assertEquals(9, grid.getCellValue(0, 8));
 		assertEquals(9, grid.getCellValue(8, 0));
+	}
+	
+	@Test
+	/**
+	 * Does solve hidden single, test case 1.
+	 */
+	public void doesSolveHiddenSingle1() {
+		Grid grid  = new Grid();
+		
+		try {
+			grid  = new Grid(new File("res/hiddenSingle1.txt"));
+		} catch (IOException e) {
+			assert false;
+		}
+		
+		grid.solveHiddenSingle();
+		
+		for (int r = 0; r < Grid.GRID_SIZE; ++r) {
+			for (int c = 0; c < Grid.GRID_SIZE; ++c) {
+				if (r == 2 && c == 6) {
+					assertEquals(5, grid.getCellValue(r, c));
+				}
+			}
+		}
+	}
+	
+	@Test
+	/**
+	 * Does solve hidden single, test case 2.
+	 */
+	public void doesSolveHiddenSingle2() {
+		Grid grid  = new Grid();
+		
+		try {
+			grid  = new Grid(new File("res/hiddenSingle2.txt"));
+		} catch (IOException e) {
+			assert false;
+		}
+		
+		grid.solveHiddenSingle();
+		
+		for (int r = 0; r < Grid.GRID_SIZE; ++r) {
+			for (int c = 0; c < Grid.GRID_SIZE; ++c) {
+				if (r == 2 && c == 3) {
+					assertEquals(6, grid.getCellValue(r, c));
+				}
+			}
+		}
 	}
 	
 	@Test

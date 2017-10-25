@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 
 /**
@@ -93,6 +94,48 @@ public class Grid {
 	}
 	
 	/**
+	 * Returns a list of all of the cells in the specified row.
+	 * @param row The row number in the range [0, 8].
+	 * @return The list of cells in the row.
+	 */
+	public ArrayList<Cell> getRow(int row) {
+		assert row >= 0 && row <= 8;
+		
+		ArrayList<Cell> cells = new ArrayList<Cell>();
+		for (int r = 0; r < GRID_SIZE; ++r) {
+			for (int c = 0; c < GRID_SIZE; ++c) {
+				Cell cell = this.getCell(r, c);
+				if (cell.getRow() == row) {
+					cells.add(cell);
+				}
+			}
+		}
+		
+		return cells;
+	}
+	
+	/**
+	 * Returns a list of all of the cells in the specified column.
+	 * @param row The column number in the range [0, 8].
+	 * @return The list of cells in the column.
+	 */
+	public ArrayList<Cell> getColumn(int col) {
+		assert col >= 0 && col <= 8;
+		
+		ArrayList<Cell> cells = new ArrayList<Cell>();
+		for (int r = 0; r < GRID_SIZE; ++r) {
+			for (int c = 0; c < GRID_SIZE; ++c) {
+				Cell cell = this.getCell(r, c);
+				if (cell.getColumn() == col) {
+					cells.add(cell);
+				}
+			}
+		}
+		
+		return cells;
+	}
+	
+	/**
 	 * Sets the value of the cell at the specified row and column if the cell
 	 * is not read-only.
 	 * @param r The row of the cell.
@@ -163,6 +206,43 @@ public class Grid {
 				
 				if (candidates.size() == 1) {
 					this.setCellValue(r, c, candidate, true);
+				}
+			}
+		}
+	}
+	
+	// CS 440, 450, 422, 480 (hummel)
+	
+	/**
+	 * Solves all cells in the grid which fit the hidden single cell criteria.
+	 */
+	public void solveHiddenSingle() {
+		for (int r = 0; r < GRID_SIZE; ++r) {
+			for (int c = 0; c < GRID_SIZE; ++c) {
+				Cell at = this.getCell(r, c);
+
+				if (at.getReadOnly() || at.getContents() != 0) continue;
+				
+				ArrayList<Cell> row = this.getRow(at.getRow());
+				ArrayList<Cell> col = this.getColumn(at.getColumn());
+				ArrayList<Cell> reg = this.getRegion(at.getRegion());
+
+				int rowCandidate = hiddenSingleHelper(row);
+				if (rowCandidate > 0) {
+					this.setCellValue(r, c, rowCandidate, true);
+					continue;
+				}
+				
+				int colCandidate = hiddenSingleHelper(col);
+				if (colCandidate > 0) {
+					this.setCellValue(r, c, colCandidate, true);
+					continue;
+				}
+
+				int regCandidate = hiddenSingleHelper(reg);
+				if (regCandidate > 0) {
+					this.setCellValue(r, c, regCandidate, true);
+					continue;
 				}
 			}
 		}
@@ -242,5 +322,31 @@ public class Grid {
 		assert c >= 0 && c < GRID_SIZE;
 		
 		return this.m_cells[r][c];
+	}
+	
+	/**
+	 * Checks if the candidates list of each cell has exactly one occurrence of
+	 * some cell. If so, the sole value is returned.
+	 * @param cells The list of cells.
+	 * @return The sole value in the candidates list, or zero if no such value
+	 *         exists.
+	 */
+	private int hiddenSingleHelper(ArrayList<Cell> cells) {
+		int candidates[] = new int[GRID_SIZE];
+		
+		for (Cell cell : cells) {
+			if (cell.getReadOnly()) continue;
+			
+			for (int i : cell.getCandidates()) {
+				candidates[i - 1]++;
+			}
+		}
+		for (int i = 0; i < candidates.length; ++i) {
+			if (candidates[i] == 1) {
+				return i + 1;
+			}
+		}
+		
+		return 0;
 	}
 }
