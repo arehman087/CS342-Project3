@@ -247,6 +247,129 @@ public class Grid {
 			}
 		}
 	}
+	/**
+	 * Narrows down candidates using Naked Pair method 
+	 */
+	public void solveNaked(){
+		for (int r = 0; r < GRID_SIZE; ++r) {
+			for (int c = 0; c < GRID_SIZE; ++c) {
+				Cell at = this.getCell(r, c);
+
+				if (at.getReadOnly() || at.getContents() != 0) continue;
+				
+				ArrayList<Cell> row = this.getRow(at.getRow());
+				ArrayList<Cell> col = this.getColumn(at.getColumn());
+				ArrayList<Cell> reg = this.getRegion(at.getRegion());
+				
+				ArrayList<Cell> rowPair = nakedHelper(row);
+				if (rowPair.size() == 2){
+					
+						for (Cell del : row){
+							if (del.getReadOnly() || (del.getColumn() == rowPair.get(0).getColumn() && del.getRow() == rowPair.get(0).getRow())
+									|| (del.getColumn() == rowPair.get(1).getColumn() && del.getRow() == rowPair.get(1).getRow())){
+								continue;
+							}
+							System.out.println(del.getCandidates());
+							del.getCandidates().removeAll(rowPair.get(0).getCandidates());
+							System.out.println(del.getCandidates());
+							if (del.getCandidates().size() == 1){
+								this.setCellValue(del.getRow(), del.getColumn(), lastVal(del.getCandidates()), true);
+								System.out.println("HERE ROW");
+								break;
+							}
+						}
+					}
+				
+				ArrayList<Cell> ColPair = nakedHelper(col);
+				if (ColPair.size() == 2){
+					
+						for (Cell del : col){
+							if (del.getReadOnly() || (del.getColumn() == ColPair.get(0).getColumn() && del.getRow() == ColPair.get(0).getRow())
+									|| (del.getColumn() == ColPair.get(1).getColumn() && del.getRow() == ColPair.get(1).getRow())){
+								continue;
+							}
+							System.out.println(del.getCandidates());
+							del.getCandidates().removeAll(ColPair.get(0).getCandidates());
+							System.out.println(del.getCandidates());
+							if (del.getCandidates().size() == 1){
+								this.setCellValue(del.getRow(), del.getColumn(), lastVal(del.getCandidates()), true);
+								System.out.println("HERE COL");
+								break;
+							}
+						}
+					}
+				
+				ArrayList<Cell> regPair = nakedHelper(reg);
+				if (regPair.size() == 2){
+					
+						for (Cell del : row){
+							if (del.getReadOnly() || (del.getColumn() == regPair.get(0).getColumn() && del.getRow() == regPair.get(0).getRow())
+									|| (del.getColumn() == regPair.get(1).getColumn() && del.getRow() == regPair.get(1).getRow())){
+								continue;
+							}
+							System.out.println(del.getCandidates());
+							del.getCandidates().removeAll(regPair.get(0).getCandidates());
+							System.out.println(del.getCandidates());
+							if (del.getCandidates().size() == 1){
+								this.setCellValue(del.getRow(), del.getColumn(), lastVal(del.getCandidates()), true);
+								System.out.println("HERE REG");
+								break;
+							}
+						}
+					}
+				
+				
+				
+				
+			}
+		}
+	}
+	
+	
+	public ArrayList<Cell> nakedHelper(ArrayList<Cell> cells){
+		ArrayList<Cell> matches = new ArrayList<Cell>();
+		ArrayList<Cell> pair = new ArrayList<Cell>();
+		for (Cell cell : cells) {
+			if (cell.getReadOnly() || cell.getCandidates().size() != 2) continue;
+			
+			matches.add(cell);
+			}
+		for (int i = 0; i < matches.size()-1; ++i){
+			for (int j = i+1; j < matches.size(); ++j){
+				boolean found = compareCandidates(matches, i, j);
+				if (found){
+					pair.add(matches.get(i));
+					pair.add(matches.get(j));
+					return pair;
+				}
+			}
+		}
+		return pair;
+	}
+	
+	public int lastVal(HashSet<Integer> val){
+		for (int i = 1; i < 10; ++i){
+			if (val.contains(i)){
+				return i;
+			}
+		}
+		//should never touch this
+		return -1;
+	}
+	public boolean compareCandidates(ArrayList<Cell> cells, int first, int second){
+		int count = 0;
+		for (Integer i : cells.get(first).getCandidates()){
+			for (Integer j : cells.get(second).getCandidates()){
+				if (i == j){
+					count++;
+				}
+			}
+		}
+		if (count  == 2){
+			return true;
+		}
+		else {return false;}
+	}
 	
 	/**
 	 * Returns a String representation of the Grid.

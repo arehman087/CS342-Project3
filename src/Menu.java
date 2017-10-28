@@ -145,15 +145,34 @@ public class Menu extends JFrame {
 		//set Hint menu items
 		JCheckBoxMenuItem checker = new JCheckBoxMenuItem("Check");
 		this.hintMenu.add(checker);
-		checker.addActionListener(null);
+		checker.addActionListener( new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				AbstractButton temp = (AbstractButton) e.getSource();
+				boolean selected = temp.getModel().isSelected();
+				Menu.this.window.setHint(selected);
+			}
+		});
 		
 		JMenuItem sAlgItem = new JMenuItem("Single");
 		this.hintMenu.add(sAlgItem);
-		sAlgItem.addActionListener(null);
+		sAlgItem.addActionListener( new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				Menu.this.window.getGrid().solveSingle();
+				Grid update = Menu.this.window.getGrid();
+				Menu.this.window.setGrid(update);
+			}
+		});
 		
 		JMenuItem hAlgItem = new JMenuItem("Hidden");
 		this.hintMenu.add(hAlgItem);
-		hAlgItem.addActionListener(null);
+		hAlgItem.addActionListener( new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				Menu.this.window.getGrid().solveHiddenSingle();
+				Grid update = Menu.this.window.getGrid();
+				Menu.this.window.setGrid(update);
+				System.out.println(update);
+			}
+		});
 		
 		JMenuItem LCAlgItem = new JMenuItem("locked Candidate");
 		this.hintMenu.add(LCAlgItem);
@@ -161,7 +180,14 @@ public class Menu extends JFrame {
 		
 		JMenuItem NPAlgItem = new JMenuItem("Naked Pairs");
 		this.hintMenu.add(NPAlgItem);
-		NPAlgItem.addActionListener(null);
+		NPAlgItem.addActionListener( new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				Menu.this.window.getGrid().solveNaked();
+				Grid update = Menu.this.window.getGrid();
+				Menu.this.window.setGrid(update);
+				System.out.println(update);
+			}
+		});
 		
 		JMenuItem fillItem = new JMenuItem("Fill");
 		this.hintMenu.add(fillItem);
