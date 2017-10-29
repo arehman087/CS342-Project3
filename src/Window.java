@@ -213,7 +213,7 @@ public class Window extends JFrame{
 								temp.setText(Integer.toString(val));
 							}
 						}
-						
+						Window.this.grid.isSolved();
 						System.out.println(grid);
 					}
 				});

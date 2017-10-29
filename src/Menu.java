@@ -176,7 +176,14 @@ public class Menu extends JFrame {
 		
 		JMenuItem LCAlgItem = new JMenuItem("locked Candidate");
 		this.hintMenu.add(LCAlgItem);
-		LCAlgItem.addActionListener(null);
+		LCAlgItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				Menu.this.window.getGrid().solveLocked();;
+				Grid update = Menu.this.window.getGrid();
+				Menu.this.window.setGrid(update);
+				System.out.println(update);
+			}
+		});
 		
 		JMenuItem NPAlgItem = new JMenuItem("Naked Pairs");
 		this.hintMenu.add(NPAlgItem);
@@ -191,7 +198,27 @@ public class Menu extends JFrame {
 		
 		JMenuItem fillItem = new JMenuItem("Fill");
 		this.hintMenu.add(fillItem);
-		fillItem.addActionListener(null);
+		fillItem.addActionListener( new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				int k = 0;
+				while (!Menu.this.window.getGrid().isSolved()){
+					Menu.this.window.getGrid().solveNaked();
+					Menu.this.window.getGrid().solveLocked();
+					Menu.this.window.getGrid().solveSingle();
+					Menu.this.window.getGrid().solveHiddenSingle();
+					Grid update = Menu.this.window.getGrid();
+					Menu.this.window.setGrid(update);
+					System.out.println(update);
+					k++;
+					if (k > 100){
+						break;
+					}
+				}
+				
+				
+				
+			}
+		});
 	}
 	/**
 	 * @return gets the file menu contents

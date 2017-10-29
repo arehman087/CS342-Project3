@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import javax.swing.JOptionPane;
+
 /**
  * Defines the class representing the Sudoku grid.
  */
@@ -202,10 +204,12 @@ public class Grid {
 				if (at.getReadOnly() || at.getContents() != 0) continue;
 				
 				HashSet<Integer> candidates = at.getCandidates();
-				Integer candidate = candidates.iterator().next(); 
+				if (candidates.iterator().hasNext()){
+					Integer candidate = candidates.iterator().next(); 
 				
-				if (candidates.size() == 1) {
-					this.setCellValue(r, c, candidate, true);
+					if (candidates.size() == 1) {
+						this.setCellValue(r, c, candidate, true);
+					}
 				}
 			}
 		}
@@ -247,6 +251,192 @@ public class Grid {
 			}
 		}
 	}
+	
+	/**
+	 * Narrows down candidates using Locked Candidate method 
+	 */
+	public void solveLocked(){
+		int[] xBlock = {0, 3, 6};
+		int[] yBlock = {0, 3, 6};
+		for (int r : xBlock){
+			for (int c : yBlock){
+				Cell at = this.getCell(r, c);
+				
+				ArrayList<Cell> reg = this.getRegion(at.getRegion());
+				
+				rowBox(reg, c, yBlock);
+				colBox(reg, r, yBlock);
+				boxRow(reg, c, yBlock);
+				boxCol(reg, r, yBlock);
+			}
+		}
+	}
+	
+//eliminates in the box
+	/**
+	 * 
+	 * @param box takes in the list of the box the cell is located in
+	 * @param tells which row to look in
+	 * @param  vShiftgets the specific row in the box 
+	 */
+	public void boxRow( ArrayList<Cell> box, int c, int [] vShift){
+		for (int y : vShift){
+			Cell at = this.getCell(box.get(y).getRow(), box.get(y).getColumn());
+			ArrayList<Cell> row = this.getRow(at.getRow());
+			ArrayList<Integer> rem = findCandids(row, c, 1);
+			
+			narrowCandidList(box, rem, c);
+			if (rem.size() == 1){
+				remS(row, y, rem.get(0));
+			}
+			for (int i = 0; i < 9; ++i){
+				if (row.get(i).getCandidates().size() == 1){
+					this.setCellValue(row.get(i).getRow(), row.get(i).getColumn(), lastVal(row.get(i).getCandidates()), true);
+				}
+			}
+			
+		}
+	}
+	
+	/**
+	 * 
+	 * @param box takes in the list of the box the cell is located in
+	 * @param tells which row to look in
+	 * @param  vShiftgets the specific row in the box 
+	 */
+	public void boxCol( ArrayList<Cell> box, int c, int [] vShift){
+		for (int y : vShift){
+			Cell at = this.getCell(box.get(y).getRow(), box.get(y).getColumn());
+			ArrayList<Cell> col = this.getColumn(at.getColumn());
+			ArrayList<Integer> rem = findCandids(col, c, 1);
+			
+			narrowCandidList(box, rem, c);
+			if (rem.size() == 1){
+				remS(col, y, rem.get(0));
+			}
+			for (int i = 0; i < 9; ++i){
+				if (col.get(i).getCandidates().size() == 1){
+					this.setCellValue(col.get(i).getRow(), col.get(i).getColumn(), lastVal(col.get(i).getCandidates()), true);
+				}
+			}
+			
+		}
+	}
+	
+	
+	/**
+	 * 
+	 * @param box takes in the list of the box the cell is located in
+	 * @param tells which row to look in
+	 * @param  vShiftgets the specific row in the box 
+	 */
+	public void rowBox( ArrayList<Cell> box, int c, int [] vShift){
+		for (int y : vShift){
+			Cell at = this.getCell(box.get(y).getRow(), box.get(y).getColumn());
+			ArrayList<Cell> row = this.getRow(at.getRow());
+			ArrayList<Integer> rem = findCandids(row, c, 0);
+			
+			narrowCandidList(row, rem, c);
+			if (rem.size() == 1){
+				remS(box, y, rem.get(0));
+			}
+			for (int i = 0; i < 9; ++i){
+				if (box.get(i).getCandidates().size() == 1){
+					this.setCellValue(box.get(i).getRow(), box.get(i).getColumn(), lastVal(box.get(i).getCandidates()), true);
+				}
+			}
+			
+		}
+	}
+	
+	/**
+	 * 
+	 * @param box takes in the list of the box the cell is located in
+	 * @param tells which col to look in
+	 * @param  vShiftgets the specific col in the box 
+	 */
+	public void colBox( ArrayList<Cell> box, int c, int [] vShift){
+		for (int y : vShift){
+			Cell at = this.getCell(box.get(y).getRow(), box.get(y).getColumn());
+			ArrayList<Cell> col = this.getColumn(at.getColumn());
+			ArrayList<Integer> rem = findCandids(col, c, 0);
+			
+			narrowCandidList(col, rem, c);
+			if (rem.size() == 1){
+				remS(box, y, rem.get(0));
+			}
+			for (int i = 0; i < 9; ++i){
+				if (box.get(i).getCandidates().size() == 1){
+					this.setCellValue(box.get(i).getRow(), box.get(i).getColumn(), lastVal(box.get(i).getCandidates()), true);
+				}
+			}
+			
+		}
+	}
+	
+	
+	
+	/**
+	 * removes candidates from box, row, or col 
+	 */
+	public void remS(ArrayList<Cell> box, int r, int rem){
+		for (int j = 0; j < 9; ++j){
+			Cell at = this.getCell(box.get(j).getRow(), box.get(j).getColumn());
+			if (at.getReadOnly() || at.getContents() != 0) continue;
+			if (j >= r && j < r +3 ) continue;
+			
+			at.getCandidates().remove(rem);
+			if (at.getCandidates().size() == 1){
+				this.setCellValue(at.getRow(), at.getColumn(), lastVal(at.getCandidates()), true);
+			}
+		}
+	}
+	/**
+	 * finds all possible candidates 
+	 */
+	public ArrayList<Integer> findCandids(ArrayList<Cell> row, int c, int p){
+		ArrayList<Integer> rem = new ArrayList<Integer>();
+		int count  = 0;
+		if (p == 0){
+			for (int i = c; i < c+3; ++i){
+				Cell at = this.getCell(row.get(i).getRow(), row.get(i).getColumn());
+				if (at.getReadOnly() || at.getContents() != 0) count++;
+			}
+			if (count > 2) return rem;
+		}
+		
+		for (int i = 1; i < 10; ++i){
+			int match = 0;
+			for (int j = c; j < c+3; ++j){
+				Cell at = this.getCell(row.get(j).getRow(), row.get(j).getColumn());
+				if (at.getReadOnly() || at.getContents() != 0) continue;
+				if (at.getCandidates().contains(i)){
+					++match;
+				}
+			}
+			if (match > 1){
+				rem.add(i);
+			}
+		}
+		
+		return rem;
+			
+		
+	} 
+	/**
+	 * narrows down list of candidates
+	 * 
+	 */
+	public void narrowCandidList(ArrayList<Cell> box, ArrayList<Integer> rem, int avoid){
+		for (int j = 0; j < box.size(); ++j){
+			Cell at = this.getCell(box.get(j).getRow(), box.get(j).getColumn());
+			if (at.getReadOnly() || at.getContents() != 0) continue;
+			if (j >= avoid && j < avoid +3 ) continue;
+			
+			rem.removeAll(at.getCandidates());
+		}
+	}
+	
 	/**
 	 * Narrows down candidates using Naked Pair method 
 	 */
@@ -269,12 +459,11 @@ public class Grid {
 									|| (del.getColumn() == rowPair.get(1).getColumn() && del.getRow() == rowPair.get(1).getRow())){
 								continue;
 							}
-							System.out.println(del.getCandidates());
+							
 							del.getCandidates().removeAll(rowPair.get(0).getCandidates());
-							System.out.println(del.getCandidates());
+							
 							if (del.getCandidates().size() == 1){
 								this.setCellValue(del.getRow(), del.getColumn(), lastVal(del.getCandidates()), true);
-								System.out.println("HERE ROW");
 								break;
 							}
 						}
@@ -288,12 +477,12 @@ public class Grid {
 									|| (del.getColumn() == ColPair.get(1).getColumn() && del.getRow() == ColPair.get(1).getRow())){
 								continue;
 							}
-							System.out.println(del.getCandidates());
+							
 							del.getCandidates().removeAll(ColPair.get(0).getCandidates());
-							System.out.println(del.getCandidates());
+							
 							if (del.getCandidates().size() == 1){
 								this.setCellValue(del.getRow(), del.getColumn(), lastVal(del.getCandidates()), true);
-								System.out.println("HERE COL");
+								
 								break;
 							}
 						}
@@ -307,20 +496,15 @@ public class Grid {
 									|| (del.getColumn() == regPair.get(1).getColumn() && del.getRow() == regPair.get(1).getRow())){
 								continue;
 							}
-							System.out.println(del.getCandidates());
+							
 							del.getCandidates().removeAll(regPair.get(0).getCandidates());
-							System.out.println(del.getCandidates());
+							
 							if (del.getCandidates().size() == 1){
 								this.setCellValue(del.getRow(), del.getColumn(), lastVal(del.getCandidates()), true);
-								System.out.println("HERE REG");
 								break;
 							}
 						}
-					}
-				
-				
-				
-				
+				}		
 			}
 		}
 	}
@@ -471,5 +655,22 @@ public class Grid {
 		}
 		
 		return 0;
+	}
+	
+	/**
+	 * checks the entire grid to see if all spaces have been filled
+	 * then displays a message
+	 */
+	public boolean isSolved(){
+		for (int r = 0; r < GRID_SIZE; ++r) {
+			for (int c = 0; c < GRID_SIZE; ++c) {
+				Cell at = this.getCell(r, c);
+				if (at.getContents() == 0){
+					return false;
+				}
+			}
+		}
+		JOptionPane.showMessageDialog(null, "Congratulations You Win!!", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+		return true;
 	}
 }
